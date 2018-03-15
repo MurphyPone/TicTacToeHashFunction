@@ -3,10 +3,11 @@ public class TicTacToeHashCode extends Board {
 
  boolean [] winners;  // True if the hash string that maps to this index is a winner, false otherwise
     
-  TicTacToeHashCode(String s) {
-   super(s);
-  // TODO Instantiate/fill winners array.  
-  }
+ 	TicTacToeHashCode(String s) {
+ 		super(s);
+ 		// TODO Instantiate/fill winners array.  
+   
+ 	}
   
   // TODO - write the myHashCode function.  It must create a unique hashcode for all of the 
   //   possible values the game board (3 ^ 9) and it MUST use the super.charAt(row, col) function

@@ -2,22 +2,22 @@ import java.lang.reflect.Field;
 
 public class TicTacToeHashMap  {
 
-// TODO Define a hash map to store the winning strings as Key and true as Value
+	// TODO Define a hash map to store the winning strings as Key and true as Value
 
    TicTacToeHashMap() {
    // TODO Instantiate/fill your HashMap ... pay attention to initial capacity and load values
    
    }
 
-// TODO This method uses reflect to investigae the objects inside the HashMap
-// You should be able to update this with your information and determine 
-// Information about capacity (different than size()) and what is stored in the cells
+   // TODO This method uses reflect to investigae the objects inside the HashMap
+   // You should be able to update this with your information and determine 
+   // Information about capacity (different than size()) and what is stored in the cells
 
    private int capacity() throws NoSuchFieldException, IllegalAccessException {
-      Field tableField = HashMap.class.getDeclaredField("table");
-      tableField.setAccessible(true);
-      Object[] table = (Object[]) tableField.get(##YOUR HASH MAP HERE ##);
-      return table == null ? 0 : table.length;   
+	   Field tableField = HashMap.class.getDeclaredField("table");
+	   tableField.setAccessible(true);
+	   Object[] table = (Object[]) tableField.get(##YOUR HASH MAP HERE ##);  //TODO put my hash map here I guess
+	   return table == null ? 0 : table.length;   
    }
    
    // TODO using the same code to get the table of entries as in the capacity method,
@@ -28,8 +28,7 @@ public class TicTacToeHashMap  {
    public static void main(String[] args) throws java.io.FileNotFoundException,
                                               NoSuchFieldException, 
                                               IllegalAccessException {
-
-      TicTacToeHashMap m = new TicTacToeHashMap();
+	   TicTacToeHashMap m = new TicTacToeHashMap();
 
   // TODO read in and store the strings in your hashmap, then close the file
   

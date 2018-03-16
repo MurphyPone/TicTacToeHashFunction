@@ -16,7 +16,7 @@ abstract class Board extends JFrame implements ActionListener {
    private JLabel lblWinTitle;
    
    public String[] boardValues;
-   private String boardString = "";
+   private String boardString = "";  //accept board String in TTTHashFunction?
    
    public Board(String title) {
       super(title);
@@ -122,8 +122,10 @@ abstract class Board extends JFrame implements ActionListener {
             return ' ';
       }
    }
+   
    abstract int myHashCode();
 
+   	/* gonna have to use this */
    public char charAt(int row, int col) {
       String value = buttons[row][col].getText();
       if (value.length() > 0)

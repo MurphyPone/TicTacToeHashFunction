@@ -9,39 +9,34 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 
-abstract class Board extends JFrame implements ActionListener {
+abstract class OLD_Board extends JFrame implements ActionListener {
 
    private JButton buttons[][];
    private JLabel lblHashCode;
    private JLabel lblWinTitle;
    
-   private String boardString = "";
+   public String[] boardValues;
+   private String boardString = "";  //accept board String in TTTHashFunction?
    
-   public Board(String title) {
+   public OLD_Board(String title) {
       super(title);
       setupFrame();
+      boardValues = TicTacToe.fillValues(); // Calculates all possible entries
    }
    
-   // TODO renamed from setHashCode to setHashCodeLabel
-   public void setHashCodeLabel(int hashcode) {
-      lblHashCode.setText("" + hashcode);
+   public void setHashCode(int hashcode) {
+     lblHashCode.setText("" + hashcode);
    }
    
-   // TODO renamed from setWinner to setWinnerLabel
-   public void setWinnerLabel(String result) {
-      lblWinTitle.setText(result);
-   }
-   
-   public void setWinnerLabel() {
-     
-   }
-   
-   public void setWinnerLabel(boolean result) {
-      if (result)
-         setWinnerLabel("Winner");
-      else
-         setWinnerLabel("Loser");
-   }
+   public void setWinner(String result) {
+     lblWinTitle.setText(result);
+}
+   public void setWinner(boolean result) {
+   if (result)
+     setWinner("Winner");
+   else
+     setWinner("Loser");
+}
     //  required because of abstract method, but not used   
    @Override
    public void actionPerformed(ActionEvent e) { }
@@ -51,7 +46,7 @@ abstract class Board extends JFrame implements ActionListener {
       JLabel lblHCTitle = new JLabel("Hash Code");;
       lblHashCode = new JLabel("" + myHashCode());
       lblWinTitle = new JLabel(""); // Will say either Winner or Loser 
-      setWinnerLabel(TicTacToe.isWin(boardString));
+      setWinner(TicTacToe.isWin(boardString));
       panel.setLayout(new FlowLayout());    
       panel.add(lblHCTitle);
       panel.add(lblHashCode);  
@@ -78,16 +73,13 @@ abstract class Board extends JFrame implements ActionListener {
                   public void actionPerformed(ActionEvent e){  
                      JButton btn = (JButton) e.getSource();
                      btn.setText("" + cycleValue(btn.getText().charAt(0)));
-                     resetBoardString();
                      lblHashCode.setText("" + myHashCode());
-                     //TODO - should this set the winner label text
-                     
                   }  
                });              
             panel.add(b);
             buttons[r][c] = b;           
          }
-   
+
       return panel;
    }
    
@@ -133,6 +125,7 @@ abstract class Board extends JFrame implements ActionListener {
    
    abstract int myHashCode();
 
+   	/* gonna have to use this */
    public char charAt(int row, int col) {
       String value = buttons[row][col].getText();
       if (value.length() > 0)
@@ -142,45 +135,21 @@ abstract class Board extends JFrame implements ActionListener {
    }
    
    public void show(String s) {
-      int pos = 0;
+      int ch = 0;
       String letter;
       for (int r = 0; r < TicTacToe.ROWS; r++)
          for (int c = 0; c < TicTacToe.COLS; c++){
-            char ch = s.charAt(pos);
-            switch (ch) {
-               case '1' : letter = "x"; 
+            switch (s.substring(ch,ch+1)) {
+               case "1" : letter = "x"; 
                   break;
-               case '2' : letter = "o"; 
+               case "2" : letter = "o"; 
                   break;
-               case '0'  : letter = " "; 
-                  break;
-               default : letter = "" + ch;                                                                                                                                                                                                                                                                                        xx: letter = " ";
-            }       
+               default  : letter = " ";                                                                                                                                                                                                                                                                                         xx: letter = " ";
+            }
+         
             buttons[r][c].setText(letter);
             ch++;
          }
-   }
-   //TODO Added this method
-   public void resetBoardString() {
-      for (int r = 0; r < TicTacToe.ROWS; r++)
-         for (int c = 0; c < TicTacToe.COLS; c++){
-            boardString += buttons[r][c].getText();
-         }
-   }
-   // TODO Added this Method
-   public void setBoardString(String s) {
-      boardString = s;
-      show(s);
-   }
-   // TODO Added this message
-   public void displayRandomString() {
-      for (int r = 0; r < TicTacToe.ROWS; r++) 
-         for (int c = 0; c < TicTacToe.COLS; c++) {
-            char ch = randomXO();           
-            boardString += ch;
-            buttons[r][c].setText(""+ch);
-         }
-      setHashCodeLabel(myHashCode());
-      setWinnerLabel(TicTacToe.isWin(boardString));
+   
    }
 }

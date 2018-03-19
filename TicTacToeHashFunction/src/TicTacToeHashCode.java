@@ -2,73 +2,60 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+//TODO Make sure you remove all of the TODO comments from this file before turning itin
 public class TicTacToeHashCode extends Board {
 
-	boolean [] winners;  // True if the hash string that maps to this index is a winner, false otherwise (by default)
-    
- 	TicTacToeHashCode(String s) {
- 		super(s);
- 		winners = new boolean[19683]; //Array of size 3^9
- 		//read in file TicTacToeWinners.txt
-	    Scanner input = openFile("TicTacToeWinners.txt");	
- 		//winners[hashCode(currentString)] = tru
-	    while (input.hasNext() != null) 
-	    	winners[ myHashCode(input.next() )] = true;
- 	}
-  
- 	@Override
-    public int myHashCode() {
- 		int sum = 0; //invalid by default
-		int move = -1; //hash value of the current character
-		
-		//if( (board.length()) == LENGTH ) { //make sure the board is valid
-			for(int r = 0; r < TicTacToe.ROWS; r++) { //iterate through the rows 
-				for(int c = 0; c < TicTacToe.COLS; c++) { //iterate through the cols 
-					char current = (char) charAt(r, c); 	//Get hashCode of charAt(r, c)
-					move = charCode(current); //get value of current char
-				
-					if(move >= 0) { //ensure it's valid
-						int i = r * TicTacToe.COLS + c;
-						sum += move * Math.pow(3, i); //The algorithm itself --use the visual rep w/2D array?
-					} else return -2; //invalid char
-				}
-			}
-			return sum; 
-		// else invalid board return sum;
- 	}
+	boolean [] winners;  // True if the hash string that maps to this index is a winner, false otherwise
+	int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683};
  	
- 	// MY ADDED HELPER METHOD //
- 	static int charCode(char x) {		
-		//Use single quotes to indicate it's a char not a String
-		if( x == ' ') return 0;
-		if( x == 'x') return 1;
-		if( x == 'o') return 2;
-		return -1; //invalid char
-	}
-   
-    public boolean isWin(String s) {
-    // return the value in the winner array for the hash code of the board string sent in.
-    return true;
-    }
+	TicTacToeHashCode(String s) {
+ 		super(s);
+ 		winners = new boolean[19638];
+ 		// TODO Instantiate/fill winners array. 
+ 		//Read in file TicTacToeWinners.txt
+ 		Scanner input = openFile("TicTacToeWinners.txt");
+ 		while(input.hasNextLine()) { //while theres winners in the file
+ 			super.setBoardString(input.nextLine()); //get current file 
+ 			winners[myHashCode()] = true;  //set each winner[index] from the file to true
+ 			System.out.println( myHashCode() );
+ 		}
+  }
   
-   public static void main(String[] args) throws InterruptedException {
-      TicTacToeHashCode board = new TicTacToeHashCode ("Tic Tac Toe");
-      while (true) {
-      
-         String currentBoard = board.boardValues[(int)(Math.random()* board.boardValues.length)];
-         board.show(currentBoard);
-         board.setHashCode(board.myHashCode());
-         // TODO Update this line to call your isWin method.
-         board.setWinner(TicTacToe.isWin(currentBoard));
-         
-         Thread.sleep(4000);      
-      }
+ 	// TODO - write the myHashCode function.  It must create a unique hashcode for all of the 
+ 	//   possible values the game board (3 ^ 9) and it MUST use the super.charAt(row, col) function
+ 	@Override
+ 	public int myHashCode() {
+ 		int sum = 0; //invalid by default
+ 		int move = -1; //hash value of the current character
+		
+ 		//if( (board.length()) == LENGTH ) { //make sure the board is valid
+ 		for(int r = 0; r < TicTacToe.ROWS; r++) { //iterate through the rows 
+ 			for(int c = 0; c < TicTacToe.COLS; c++) { //iterate through the cols 
+ 				char current = (char) charAt(r, c); 	//Get hashCode of charAt(r, c)
+				move = charCode(current); //get value of current char
+			
+				if(move >= 0) { //ensure it's valid
+					int i = r * TicTacToe.COLS + c; //convert from 2D matrix to 1D index
+					sum += move * powsOf3[i]; //The algorithm itself --use the visual rep w/2D array? //TODO USE AN ARRAY 
+				} else return -2; //invalid char
+			}
+		}
+		return sum; 
+		// else invalid board return sum;
    }
-   
-   // FILE READING //
- 
-   public static Scanner openFile(String fname) {	
-		File file = new File(fname);
+  
+ 	//MY ADDED HELPER METHOD //
+ 	static int charCode(char x) {
+ 		//Use single quotes to indicate it's a char not a String
+ 		if( x == ' ') return 0;
+ 		if( x == 'x') return 1;
+ 		if( x == 'o') return 2;
+ 		return -1; //invalid char
+ 	}
+  
+	// FILE READING //
+ 	public static Scanner openFile(String fname) {	
+ 		File file = new File(fname);
 		Scanner input = null;
 
 		try {							//Check to see if the requested input file exists in the given directory
@@ -79,4 +66,26 @@ public class TicTacToeHashCode extends Board {
 		}
 		return input;
 	}
-}
+   
+ 	public boolean isWin(String s) {
+ 		// return the value in the winner array for the hash chode of the board string sent in.
+ 		setBoardString(s);
+ 		return winners[myHashCode()];
+    }
+  
+   public static void main(String[] args) throws InterruptedException {
+      TicTacToeHashCode board = new TicTacToeHashCode ("Tic Tac Toe");
+      while (true) {
+    	  //TODO this line no longer works
+    	  //  String currentBoard = board.boardValues[(int)(Math.random()* board.boardValues.length)];
+         
+    	  board.displayRandomString();
+    	  board.setHashCodeLabel(board.myHashCode());  //change the label to the current 
+    	  // TODO Update this line to call your isWin method.
+    	  //board.setWinner(TicTacToe.isWin(currentBoard));
+         
+    	  Thread.sleep(10000); //4,000      
+      }
+   }
+ }  
+  

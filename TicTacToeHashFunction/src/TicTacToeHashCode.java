@@ -9,8 +9,8 @@ public class TicTacToeHashCode extends Board {
 	int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683};
  	
 	TicTacToeHashCode(String s) {
- 		super(s);
- 		winners = new boolean[19638];
+ 		super(s);	//TODO ERROR --> SUPER CALLS myHashCode...
+ 		winners = new boolean[19638]; //BUT THIS ARRAY ISn't INITIALIZED YET...
  		//Read in file TicTacToeWinners.txt
  		Scanner input = openFile("TicTacToeWinners.txt");
  		while(input.hasNextLine()) { //while theres winners in the file

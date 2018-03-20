@@ -32,11 +32,7 @@ abstract class Board extends JFrame implements ActionListener {
       lblWinTitle.setText(result);
    }
    
-   public void setWinnerLabel() {
-     
-   }
-   
-   public void setWinnerLabel(boolean result) {
+      public void setWinnerLabel(boolean result) {
       if (result)
          setWinnerLabel("Winner");
       else
@@ -132,6 +128,7 @@ abstract class Board extends JFrame implements ActionListener {
    }
    
    abstract int myHashCode();
+   abstract boolean isWin(String s);
 
    public char charAt(int row, int col) {
       String value = buttons[row][col].getText();
@@ -172,6 +169,10 @@ abstract class Board extends JFrame implements ActionListener {
       boardString = s;
       show(s);
    }
+   
+   public String getBoardString(String s) {
+     return boardString;
+   }
    // TODO Added this message
    public void displayRandomString() {
       for (int r = 0; r < TicTacToe.ROWS; r++) 
@@ -181,6 +182,10 @@ abstract class Board extends JFrame implements ActionListener {
             buttons[r][c].setText(""+ch);
          }
       setHashCodeLabel(myHashCode());
-      setWinnerLabel(TicTacToe.isWin(boardString));
+
+     setWinnerLabel(isWin(boardString));
+     
    }
+   
+   
 }

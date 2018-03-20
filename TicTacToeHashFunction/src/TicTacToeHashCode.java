@@ -11,7 +11,6 @@ public class TicTacToeHashCode extends Board {
 	TicTacToeHashCode(String s) {
  		super(s);
  		winners = new boolean[19638];
- 		// TODO Instantiate/fill winners array. 
  		//Read in file TicTacToeWinners.txt
  		Scanner input = openFile("TicTacToeWinners.txt");
  		while(input.hasNextLine()) { //while theres winners in the file
@@ -25,26 +24,26 @@ public class TicTacToeHashCode extends Board {
  	//   possible values the game board (3 ^ 9) and it MUST use the super.charAt(row, col) function
  	@Override
  	public int myHashCode() {
- 		int sum = 0; //invalid by default
- 		int move = -1; //hash value of the current character
+ 		int sum = 0;	//invalid by default
+ 		int move = -1;	//hash value of the current character
 		
- 		//if( (board.length()) == LENGTH ) { //make sure the board is valid
- 		for(int r = 0; r < TicTacToe.ROWS; r++) { //iterate through the rows 
- 			for(int c = 0; c < TicTacToe.COLS; c++) { //iterate through the cols 
- 				char current = (char) charAt(r, c); 	//Get hashCode of charAt(r, c)
-				move = charCode(current); //get value of current char
+ 		//if( (board.length()) == LENGTH ) {	//make sure the board is valid
+ 		for(int r = 0; r < TicTacToe.ROWS; r++) {	//iterate through the rows 
+ 			for(int c = 0; c < TicTacToe.COLS; c++) {	//iterate through the cols 
+ 				char current = (char) charAt(r, c);		//Get hashCode of charAt(r, c)
+				move = charCode(current);	//get value of current char
 			
-				if(move >= 0) { //ensure it's valid
-					int i = r * TicTacToe.COLS + c; //convert from 2D matrix to 1D index
-					sum += move * powsOf3[i]; //The algorithm itself --use the visual rep w/2D array? //TODO USE AN ARRAY 
-				} else return -2; //invalid char
+				if(move >= 0) {	//ensure it's valid
+					int i = r * TicTacToe.COLS + c;	//convert from 2D matrix to 1D index
+					sum += move * powsOf3[i];	//The algorithm itself //gets called in super.... from reverse inherited 
+				} else return -2;	//invalid char
 			}
 		}
 		return sum; 
 		// else invalid board return sum;
    }
   
- 	//MY ADDED HELPER METHOD //
+ 	// MY ADDED HELPER METHOD //
  	static int charCode(char x) {
  		//Use single quotes to indicate it's a char not a String
  		if( x == ' ') return 0;
@@ -76,8 +75,7 @@ public class TicTacToeHashCode extends Board {
    public static void main(String[] args) throws InterruptedException {
       TicTacToeHashCode board = new TicTacToeHashCode ("Tic Tac Toe");
       while (true) {
-    	  //TODO this line no longer works
-    	  //  String currentBoard = board.boardValues[(int)(Math.random()* board.boardValues.length)];
+    	  board.setBoardString("xxxooo   "); //TODO IS THIS ALLOWED?
          
     	  board.displayRandomString();
     	  board.setHashCodeLabel(board.myHashCode());  //change the label to the current 

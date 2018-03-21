@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class TicTacToeHashCode extends Board {
 
 	boolean [] winners;  // True if the hash string that maps to this index is a winner, false otherwise
-	int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683};
- 	
+ 	static final int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683}; //for quick referencing
+
 	TicTacToeHashCode(String s) {
  		super(s);	//TODO ERROR --> SUPER CALLS myHashCode...
  		winners = new boolean[19638]; //BUT THIS ARRAY ISn't INITIALIZED YET...
@@ -26,6 +26,7 @@ public class TicTacToeHashCode extends Board {
  	public int myHashCode() {
  		int sum = 0;	//invalid by default
  		int move = -1;	//hash value of the current character
+
 		
  		//if( (board.length()) == LENGTH ) {	//make sure the board is valid
  		for(int r = 0; r < TicTacToe.ROWS; r++) {	//iterate through the rows 
@@ -65,25 +66,23 @@ public class TicTacToeHashCode extends Board {
 		}
 		return input;
 	}
-   
- 	public boolean isWin(String s) {
- 		// return the value in the winner array for the hash chode of the board string sent in.
- 		setBoardString(s);
- 		return winners[myHashCode()];
-    }
   
    public static void main(String[] args) throws InterruptedException {
       TicTacToeHashCode board = new TicTacToeHashCode ("Tic Tac Toe");
       while (true) {
-    	  board.setBoardString("xxxooo   "); //TODO IS THIS ALLOWED?
+    	  board.setBoardString("xxox xoo "); //TODO IS THIS ALLOWED?
          
     	  board.displayRandomString();
-    	  board.setHashCodeLabel(board.myHashCode());  //change the label to the current 
-    	  // TODO Update this line to call your isWin method.
-    	  //board.setWinner(TicTacToe.isWin(currentBoard));
+    	  board.setHashCodeLabel( board.myHashCode() );  //change the label to the current 
+    	  board.setWinnerLabel( board.isWin() );
          
     	  Thread.sleep(10000); //4,000      
       }
    }
+
+	@Override
+	boolean isWin() {
+		return winners[myHashCode()];
+	}
 }  
   

@@ -36,7 +36,6 @@ abstract class Board extends JFrame implements ActionListener {
       else
          setWinnerLabel("Loser");
    }
-   
     //  required because of abstract method, but not used   
    @Override
    public void actionPerformed(ActionEvent e) { }
@@ -183,6 +182,7 @@ abstract class Board extends JFrame implements ActionListener {
       setHashCodeLabel(myHashCode());
    
       setWinnerLabel(isWin());
+     
    }
    
    

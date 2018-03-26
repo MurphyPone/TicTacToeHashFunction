@@ -202,5 +202,7 @@ abstract class Board extends JFrame implements ActionListener {
 		setHashCodeLabel(myHashCode());
 		setWinnerLabel(isWin());
 	}
+	
+	//TODO make a helper method to display VALID gameboard 
 
 }

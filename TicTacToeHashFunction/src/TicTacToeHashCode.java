@@ -18,7 +18,6 @@ public class TicTacToeHashCode extends Board {
  		while(input.hasNextLine()) { //while theres winners in the file
  			super.setBoardString(input.nextLine()); //get current file 
  			winners[myHashCode()] = true;  //set each winner[index] from the file to true
- 			System.out.println( myHashCode() );
  		}
 	}
 
@@ -40,6 +39,25 @@ public class TicTacToeHashCode extends Board {
 		}
 		return sum; 
 	}
+	
+	/* /hashcode that accepts a string for isWin()
+	public int myHashCode(String s) {
+		int sum = 0;	//invalid by default
+ 		int move = -1;	//hash value of the current character
+
+ 		for(int r = 0; r < TicTacToe.ROWS; r++) {	//iterate through the rows 
+ 			for(int c = 0; c < TicTacToe.COLS; c++) {	//iterate through the cols 
+ 				char current = (char) charAt(s, r, c);		//Get hashCode of charAt(s, r, c)
+				move = charCode(current);	//get value of current char
+			
+				if(move >= 0) {	//ensure it's valid
+					int i = r * TicTacToe.COLS + c;	//convert from 2D matrix to 1D index
+					sum += move * powsOf3[i];	//The algorithm itself //gets called in super.... from reverse inherited 
+				} else return -2;	//invalid char
+			}
+		}
+		return sum; 
+	} */
 	
 	// MY ADDED HELPER METHOD //
  	static int charCode(char x) {
@@ -68,21 +86,22 @@ public class TicTacToeHashCode extends Board {
 	public boolean isWin(String s) {
       // TODO write an isWin method that takes in a String.  This should not change the board.  Board has an additional charAt 
       // TODO method to facilitate this
+		System.out.println(s);
+		//return winners[myHashCode(s)];
 		return false;
-      }
+	}
       
 	@Override
 	public boolean isWin() {
-		System.out.println(winners[myHashCode()]);
 		return winners[myHashCode()];
-      }
+     }
       
 	public static void main(String[] args) throws InterruptedException {
 		TicTacToeHashCode board = new TicTacToeHashCode("Tic Tac Toe");
-		 /* while (true) {
+		 while (true) {
 		   board.displayRandomString();
-		   Thread.sleep(10000); //4 seconds usually 
-		 } */
+		   Thread.sleep(15000); //4 seconds usually 
+		 } 
 	}
 
 }

@@ -40,14 +40,14 @@ public class TicTacToeHashCode extends Board {
 		return sum; 
 	}
 	
-	/* /hashcode that accepts a string for isWin()
+	//hashcode that accepts a string for isWin()
 	public int myHashCode(String s) {
 		int sum = 0;	//invalid by default
  		int move = -1;	//hash value of the current character
 
  		for(int r = 0; r < TicTacToe.ROWS; r++) {	//iterate through the rows 
  			for(int c = 0; c < TicTacToe.COLS; c++) {	//iterate through the cols 
- 				char current = (char) charAt(s, r, c);		//Get hashCode of charAt(s, r, c)
+ 				char current = (char) charAt(s, r, c);		//Get hashCode of charAt(s, r, c)  --ONLY DIFFERENCE FROM no args hashcode()
 				move = charCode(current);	//get value of current char
 			
 				if(move >= 0) {	//ensure it's valid
@@ -57,7 +57,7 @@ public class TicTacToeHashCode extends Board {
 			}
 		}
 		return sum; 
-	} */
+	} 
 	
 	// MY ADDED HELPER METHOD //
  	static int charCode(char x) {
@@ -82,22 +82,56 @@ public class TicTacToeHashCode extends Board {
 		return input;
 	}
 
-	@Override
+	@Override //Accepts a String
 	public boolean isWin(String s) {
-      // TODO write an isWin method that takes in a String.  This should not change the board.  Board has an additional charAt 
-      // TODO method to facilitate this
 		System.out.println(s);
-		//return winners[myHashCode(s)];
-		return false;
+		return winners[myHashCode(s)];
 	}
       
 	@Override
 	public boolean isWin() {
 		return winners[myHashCode()];
-     }
-      
+    }
+	
+	public boolean isValid(String b) {
+		char[] board = b.toCharArray();
+		int numXs = 0;
+		int numOs = 0;
+		int numSpaces = 0;
+		
+		if(board.length  < 9 || board.length > 9 )return false;  //Boards should only be 9 chars long
+		
+		for(int i = 0; i < board.length; i++ ) { //Iterate through the board to count num plays
+			if( charCode(board[i]) == 0 ) numSpaces++;
+			if( charCode(board[i]) == 1 ) numXs++;
+			if( charCode(board[i]) == 2 ) numOs++;
+		}
+		
+		if(numXs < 3 && numOs < 3) return false; //not enough plays --> could check numSpaces
+		if(Math.abs(numXs - numOs) > 1) return false;  //two more Xs or Os than the other 
+		
+		return true; //If it passes everything 
+	}
+	
+	//Part I.3  //TODO ISSUE HERE WITH STATIC METHOD
+	public String printWinners(String input) {
+		String results = "";
+		System.out.println("Results from " + input + "\n");
+		Scanner in = openFile(input);
+ 		while(in.hasNextLine()) { //while theres winners in the file
+ 			String board = in.nextLine();
+ 			if(isValid(board))
+ 				results += board + " : " + myHashCode(board);
+ 			else 
+ 				results += board + " : invalid";
+ 		}
+ 		return results;
+	}
+     
 	public static void main(String[] args) throws InterruptedException {
 		TicTacToeHashCode board = new TicTacToeHashCode("Tic Tac Toe");
+		System.out.print( printWinners("TTT_Tests.txt") ); //Default file TTT_Tests.txt
+		
 		 while (true) {
 		   board.displayRandomString();
 		   Thread.sleep(15000); //4 seconds usually 

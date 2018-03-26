@@ -3621,7 +3621,7 @@
  xxooo  o false
  xxooo x  false
  xxooo xx false
- xxooo xo false
+ xxooo xo true
  xxooo o  false
  xxooo ox false
  xxooo oo false

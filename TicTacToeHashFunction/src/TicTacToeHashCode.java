@@ -82,9 +82,8 @@ public class TicTacToeHashCode extends Board {
 		return input;
 	}
 
-	@Override //Accepts a String
+	//Accepts a String
 	public boolean isWin(String s) {
-		System.out.println(s);
 		return winners[myHashCode(s)];
 	}
       
@@ -93,7 +92,7 @@ public class TicTacToeHashCode extends Board {
 		return winners[myHashCode()];
     }
 	
-	public boolean isValid(String b) {
+	public static boolean isValid(String b) {
 		char[] board = b.toCharArray();
 		int numXs = 0;
 		int numOs = 0;
@@ -107,35 +106,39 @@ public class TicTacToeHashCode extends Board {
 			if( charCode(board[i]) == 2 ) numOs++;
 		}
 		
-		if(numXs < 3 && numOs < 3) return false; //not enough plays --> could check numSpaces
+		if( (numXs < 3 && numOs < 2) || (numXs < 2 && numOs < 3) ) return false; //not enough plays --> could check numSpaces
 		if(Math.abs(numXs - numOs) > 1) return false;  //two more Xs or Os than the other 
 		
 		return true; //If it passes everything 
 	}
 	
 	//Part I.3  //TODO ISSUE HERE WITH STATIC METHOD
-	public String printWinners(String input) {
+	public String printWinners(String input) throws InterruptedException {
 		String results = "";
 		System.out.println("Results from " + input + "\n");
 		Scanner in = openFile(input);
  		while(in.hasNextLine()) { //while theres winners in the file
  			String board = in.nextLine();
- 			if(isValid(board))
- 				results += board + " : " + myHashCode(board);
- 			else 
- 				results += board + " : invalid";
+ 			
+ 			//Output the result
+ 			if(isValid(board)) {
+ 				setHashCodeLabel(myHashCode(board));	//update the GUI
+ 				setWinnerLabel(isWin(board));
+ 				show(board);
+ 				Thread.sleep(4000); //wait for seconds
+
+ 				if(winners[myHashCode(board)]) //Is a winner
+ 					results += "(" + board + ", " + myHashCode(board) + ") = winner\n";
+ 				else 
+ 					results += "(" + board + ", " + myHashCode(board) + ") = loser\n";
+ 			} else 
+ 				results += "(" + board + ", invalid" + ") = loser\n";
  		}
  		return results;
 	}
      
 	public static void main(String[] args) throws InterruptedException {
 		TicTacToeHashCode board = new TicTacToeHashCode("Tic Tac Toe");
-		System.out.print( printWinners("TTT_Tests.txt") ); //Default file TTT_Tests.txt
-		
-		 while (true) {
-		   board.displayRandomString();
-		   Thread.sleep(15000); //4 seconds usually 
-		 } 
+		System.out.print( board.printWinners("TTT_Tests.txt") ); //Default file TTT_Tests.txt
 	}
-
 }

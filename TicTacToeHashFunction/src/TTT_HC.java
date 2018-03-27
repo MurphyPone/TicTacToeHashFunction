@@ -4,29 +4,30 @@ import java.util.Scanner;
 
 public class TTT_HC{
 	TreeNode[] winners; //The lookup table which needs to be smaller //holds TreeNodes<String>
-	int numCollisions;
  	private static final int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683}; //for quick referencing
- 	private static final int SIZE = powsOf3[7];
+ 	private static final int SIZE = powsOf3[6];
+ 	
+ 	int numCollisions; //used for analysis
+	int numBoards;
  	
  	//Constructor
  	TTT_HC() {
- 		winners = new TreeNode[ SIZE ]; //6561 = 1/3rd of the size, nice!
- 		//for(int i = 0; i < winners.length; i++) //Try initializing each of the TreeNodes first
- 		//	winners[i] = new TreeNode("");  //place holder
+ 		winners = new TreeNode[ SIZE ]; //729
  		numCollisions = 0;
+ 		numBoards = 0;
  		
  		Scanner input = openFile("TicTacToeWinners.txt"); //Reads in file TicTacToeWinners.txt and returns a Scanner of all winning/valid game states
  		while(input.hasNextLine() ) { //Iterates through all the boards in the input file 
+ 			numBoards++; //increase the numBoards --> probably check isValid before adding it 
  			String board = input.nextLine(); //Save the Board String 
  			int index = tttHashCode(board); //Get the index from the String
  			
- 			if(winners[index] == null) //DNE 
- 				winners[index] = new TreeNode(board); //Create
- 			else {
- 				winners[index] = winners[index].add(winners[index], board); //Insert
+ 			if(winners[index] == null) //If the entry does not exist
+ 				winners[index] = new TreeNode(board); //Create one
+ 			else {	//Else the entry exists
+ 				winners[index] = winners[index].add(winners[index], board); //Insert the colliding value 
  				numCollisions++;
  			}
- 
  		}
  		System.out.printf("Table created with %d collisions\n", numCollisions);
 	}
@@ -89,8 +90,7 @@ public class TTT_HC{
 	}
  	
  	//Analysis 
- 	public void analyze() {
- 		int numCollisions = 0;
+ 	public void analyze() { //TODO Add analysis for tenths
  		int empty = 0;
  		int Q1 = 0;
  		int Q2 = 0;
@@ -98,26 +98,28 @@ public class TTT_HC{
  		int Q4 = 0;
  		int lowest = winners.length;
  		int highest = 0;
- 		for(int i = 0; i < winners.length; i ++) {
-
- 			if(winners[i] == null) empty++;
- 			else 
- 				if(i < lowest) lowest = i;
- 				if(i > highest) highest = i;
- 				if(i < winners.length/4) Q1++;
- 				if(i > winners.length/4 && i < winners.length/2) Q2++;
- 				if(i > winners.length/2 && i < 3*winners.length/4) Q3++;
- 				if(i > 3*winners.length/4) Q4++;
+ 		
+ 		for(int i = 0; i < winners.length; i++) {
+ 			if(winners[i] == null) //If it's an empty slot
+ 				empty++;
+ 			else { 
+ 				if(i < lowest) lowest = i; //First entry in the table
+ 				if(i > highest) highest = i; //Highest entry in the table
+ 				if(i < SIZE/4) Q1++; //in First quartile
+ 				if(i > SIZE/4 && i < SIZE/2) Q2++; //in second quartile
+ 				if(i > SIZE/2 && i < (3*SIZE)/4) Q3++; //in third quartile
+ 				if(i > (3*SIZE)/4) Q4++; //in fourth quartile
+ 			}
  		}
  		System.out.println("Empty slots : " + empty);
- 		System.out.println("Q1 filled : " + Q1);
- 		System.out.println("Q2 filled : " + Q2);
- 		System.out.println("Q3 filled : " + Q3);
- 		System.out.println("Q4 filled : " + Q4);
- 		System.out.println("Total # of slots filled = " + (Q1 + Q2 + Q3 + Q4) ); 
- 		System.out.println("Total # of winners in file = 442");
- 		System.out.println("#collisions = slots filled - #winners = " + ( 442 -(Q1 + Q2 + Q3 + Q4) ));
- 		System.out.println("Lowest: " + lowest + "\nhighest: " + highest);
+ 		System.out.println("#slots filled = " + (Q1 + Q2 + Q3 + Q4) + " / " + SIZE ); 
+ 		System.out.println("\tQ1 filled : " + Q1);
+ 		System.out.println("\tQ2 filled : " + Q2);
+ 		System.out.println("\tQ3 filled : " + Q3);
+ 		System.out.println("\tQ4 filled : " + Q4);
+ 		System.out.println("#Boards = " + numBoards);
+ 		System.out.println("#collisions = slots filled - #winners = " + ( numBoards -(Q1 + Q2 + Q3 + Q4) ) + "\n\tfrom constructor = " + numCollisions);
+ 		System.out.println("Lowest: " + lowest + ", highest: " + highest);
  	}
  	
  	public static void main(String[] args) throws InterruptedException {

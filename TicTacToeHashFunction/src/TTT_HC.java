@@ -1,11 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TTT_HC{
 	TreeNode[] winners; //The lookup table which needs to be smaller //holds TreeNodes<String>
  	private static final int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683}; //for quick referencing
- 	private static final int SIZE = powsOf3[6];
+ 	private static final int SIZE = powsOf3[7]; //6 or 7 are probably optimal
  	
  	int numCollisions; //used for analysis
 	int numBoards;
@@ -29,7 +30,6 @@ public class TTT_HC{
  				numCollisions++;
  			}
  		}
- 		System.out.printf("Table created with %d collisions\n", numCollisions);
 	}
 
 	public int tttHashCode(String s) {
@@ -89,42 +89,79 @@ public class TTT_HC{
 		return input;
 	}
  	
- 	//Analysis 
- 	public void analyze() { //TODO Add analysis for tenths
- 		int empty = 0;
- 		int Q1 = 0;
- 		int Q2 = 0;
- 		int Q3 = 0;
- 		int Q4 = 0;
- 		int lowest = winners.length;
- 		int highest = 0;
+ 	// ANALYSIS //
+ 	/** 
+ 	 * b. Report the size of your array and the load factor.
+ 	 * c. Report the number of collisions.
+ 	 * 		1. the number of chains (more than 1 entry)
+ 	 * 		2. the maximum chain length
+ 	 * 		3. the average chain length
+ 	 * d. Report on the distribution
+ 	 * 		i. Number of entries in each quarter of the array
+ 	 *		ii. Number of collisions in each tenth of the array
+ 	*/
+ 	public void analyze() {
+ 		int empty = 0; //number of empty slots in winners]
+ 		int filled;
+ 		//Distribution
+ 		int[] quarters = new int[4];
+ 		int[] tenths = new int[10];
+ 		
+ 		int lowest = winners.length;	//Lowest index entry
+ 		int highest = 0;	//Highest index entry
+ 		//Chain info 
+ 		int biggestChain = 0;
+ 		int sumChains = 0;
+ 		double averageChain;
+ 		int numBigChains = 0; //Big chains are greater contain > 10 collisions 
  		
  		for(int i = 0; i < winners.length; i++) {
  			if(winners[i] == null) //If it's an empty slot
  				empty++;
  			else { 
+ 				//Collision Info
+ 				int b = getSize(winners[i], 0); //store size of current chain in var 
+ 				sumChains += b; //Add the sum of all chains for average
+ 				if(b > biggestChain ) biggestChain = b; //if it's the highest, then set new highscore
+ 				if(b > 10) numBigChains++;
+ 				
+ 				//Distribution info //
  				if(i < lowest) lowest = i; //First entry in the table
  				if(i > highest) highest = i; //Highest entry in the table
- 				if(i < SIZE/4) Q1++; //in First quartile
- 				if(i > SIZE/4 && i < SIZE/2) Q2++; //in second quartile
- 				if(i > SIZE/2 && i < (3*SIZE)/4) Q3++; //in third quartile
- 				if(i > (3*SIZE)/4) Q4++; //in fourth quartile
+ 				//Collsions/tenths 
+				int ind10 = (int) ((double) i/SIZE * 10); //index as percent --> index
+ 				if(b > 1) {
+ 					tenths[ind10]++;
+ 				}
+ 				//Entries/quarters
+ 				int ind4 = (int) ((double) ind10*10/25); //x/100 = y/4 --> y = x/24
+ 				quarters[ind4]++;
  			}
  		}
- 		System.out.println("Empty slots : " + empty);
- 		System.out.println("#slots filled = " + (Q1 + Q2 + Q3 + Q4) + " / " + SIZE ); 
- 		System.out.println("\tQ1 filled : " + Q1);
- 		System.out.println("\tQ2 filled : " + Q2);
- 		System.out.println("\tQ3 filled : " + Q3);
- 		System.out.println("\tQ4 filled : " + Q4);
- 		System.out.println("#Boards = " + numBoards);
- 		System.out.println("#collisions = slots filled - #winners = " + ( numBoards -(Q1 + Q2 + Q3 + Q4) ) + "\n\tfrom constructor = " + numCollisions);
- 		System.out.println("Lowest: " + lowest + ", highest: " + highest);
+ 		averageChain = (double) sumChains/numCollisions;
+ 		filled = SIZE - empty;
+ 		
+ 		//These could be cleaned up/moved to helper methods, but it's not too bad  
+ 		System.out.printf("Table["+SIZE+"] created for "+numBoards+" boards with %d collisions\n", numCollisions);
+ 		System.out.println( filled + " / " + SIZE + " Slots filled " + " --> " + empty + " Empty slots" ); 
+ 		System.out.println("Entries per Quarter: " + Arrays.toString(quarters) );
+ 		System.out.println("Collisions per Tenth: " + Arrays.toString(tenths) );
+ 		System.out.println("Lowest Index Entry: " + lowest + ", Highest index entry: " + highest);
+ 		System.out.println("Chain Info: ");
+ 		System.out.println("\t#collisions = slots filled - #winners = " + ( numBoards - filled ) + "\n\tfrom constructor = " + numCollisions);
+ 		System.out.println("\tBiggest : "  +  biggestChain + "\n\tAverage: " +  averageChain + "\n\t#Chains with > 10 collisions: " + numBigChains);
+ 	}
+ 	
+ 	// ANALYSIS HELPERS //
+ 	private static int getSize(TreeNode root, int soFar) {
+ 		if(root == null) 
+ 			return soFar;
+ 		else 
+ 			return getSize(root.getLeft(), soFar + 1) + getSize(root.getRight(), soFar + 1);
  	}
  	
  	public static void main(String[] args) throws InterruptedException {
 		TTT_HC board = new TTT_HC();
 		board.analyze();
  	}
-
 }

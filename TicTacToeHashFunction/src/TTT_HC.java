@@ -114,6 +114,8 @@ public class TTT_HC{
  		int sumChains = 0;
  		double averageChain;
  		int numBigChains = 0; //Big chains are greater contain > 10 collisions 
+ 		int chains[] = new int[numCollisions]; //added to keep track of the actual chain sizes
+ 		int chainIndex = 0;
  		
  		for(int i = 0; i < winners.length; i++) {
  			if(winners[i] == null) //If it's an empty slot
@@ -124,6 +126,7 @@ public class TTT_HC{
  				sumChains += b; //Add the sum of all chains for average
  				if(b > biggestChain ) biggestChain = b; //if it's the highest, then set new highscore
  				if(b > 10) numBigChains++;
+ 				chains[chainIndex++] = b;
  				
  				//Distribution info //
  				if(i < lowest) lowest = i; //First entry in the table
@@ -150,6 +153,8 @@ public class TTT_HC{
  		System.out.println("Chain Info: ");
  		System.out.println("\t#collisions = slots filled - #winners = " + ( numBoards - filled ) + "\n\tfrom constructor = " + numCollisions);
  		System.out.println("\tBiggest : "  +  biggestChain + "\n\tAverage: " +  averageChain + "\n\t#Chains with > 10 collisions: " + numBigChains);
+ 		System.out.println("Call Chains: "  + Arrays.toString(chains));
+
  	}
  	
  	// ANALYSIS HELPERS //

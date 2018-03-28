@@ -18,6 +18,9 @@ public class TreeNode {
 	public void setRight(TreeNode r) { right = r; }
 	
 	// ADDED METHODS //	
+	
+	public boolean hasChildren() { return (getRight() != null || getLeft() != null); }
+	
 	public TreeNode add(TreeNode node, Object value) {
 		if(node == null) //if the Bucket is empty (null)
 			node = new TreeNode(value); //Create a new root holding the Board conf

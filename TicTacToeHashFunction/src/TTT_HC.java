@@ -22,12 +22,12 @@ public class TTT_HC{
  			numBoards++; //increase the numBoards --> probably check isValid before adding it 
  			String board = input.nextLine(); //Save the Board String 
  			int index = tttHashCode(board); //Get the index from the String
- 			
+				
  			if(winners[index] == null) //If the entry does not exist
  				winners[index] = new TreeNode(board); //Create one
  			else {	//Else the entry exists
  				winners[index] = winners[index].add(winners[index], board); //Insert the colliding value 
- 				numCollisions++;
+				numCollisions++;
  			}
  		}
 	}
@@ -114,35 +114,47 @@ public class TTT_HC{
  		int sumChains = 0;
  		double averageChain;
  		int numBigChains = 0; //Big chains are greater contain > 10 collisions 
- 		int chains[] = new int[numCollisions]; //added to keep track of the actual chain sizes
+ 		int conditionForBig= 0; //The condition for how many big chains there are = the 
+ 		int chains[] = new int[numCollisions]; //added to keep track of the actual chain sizes  
  		int chainIndex = 0;
  		
  		for(int i = 0; i < winners.length; i++) {
+			int ind10 = (int) ((double) i/SIZE * 10); //index as percent --> index
+			int ind4 = (int) ((double) ind10*10/25); //x/100 = y/4 --> y = x/24
+
  			if(winners[i] == null) //If it's an empty slot
  				empty++;
- 			else { 
+ 			else if(winners[i].hasChildren()) {//Is a Collision
  				//Collision Info
  				int b = getSize(winners[i], 0); //store size of current chain in var 
- 				sumChains += b; //Add the sum of all chains for average
- 				if(b > biggestChain ) biggestChain = b; //if it's the highest, then set new highscore
- 				if(b > 10) numBigChains++;
- 				chains[chainIndex++] = b;
- 				
- 				//Distribution info //
- 				if(i < lowest) lowest = i; //First entry in the table
- 				if(i > highest) highest = i; //Highest entry in the table
- 				//Collsions/tenths 
-				int ind10 = (int) ((double) i/SIZE * 10); //index as percent --> index
- 				if(b > 1) {
- 					tenths[ind10]++;
- 				}
- 				//Entries/quarters
- 				int ind4 = (int) ((double) ind10*10/25); //x/100 = y/4 --> y = x/24
- 				quarters[ind4]++;
- 			}
+ 				sumChains += b; //Sum all the chains for average
+ 				if(b > biggestChain ) biggestChain = b; //Keep track of the biggest chain
+ 				chains[chainIndex] = b; //Depth of chains	
+ 				tenths[ind10]++; //Distribution of Chains
+	 		} else { //Is not a collision but is filled 
+ 				//Collision info 
+	 			sumChains++; //If there is a node, it is technically a chain of length 1 
+	 			chains[chainIndex]++;
+ 			} //Do this stuff no matter what
+ 			//Distribution info //
+			if(i < lowest) lowest = i; //First entry in the table
+			if(i > highest) highest = i; //Highest entry in the table
+			//Entries/quarters
+			quarters[ind4]++;	
+ 			System.out.println(chains.length + ", " + chainIndex + ", " + numCollisions);
+
+			chainIndex++;
  		}
- 		averageChain = (double) sumChains/numCollisions;
+ 		
+ 		averageChain = (double) sumChains/numCollisions; 
  		filled = SIZE - empty;
+ 		conditionForBig = (int) (biggestChain - averageChain); //Big chains are chains that are > biggest-avg in length 
+ 		
+ 		//Secondary sweep on data gathered from pass 1 
+ 		for(int i = 0; i < chains.length; i++) {
+ 			if(chains[i] > conditionForBig) numBigChains++;
+
+ 		}
  		
  		//These could be cleaned up/moved to helper methods, but it's not too bad  
  		System.out.printf("Table["+SIZE+"] created for "+numBoards+" boards with %d collisions\n", numCollisions);
@@ -152,9 +164,8 @@ public class TTT_HC{
  		System.out.println("Lowest Index Entry: " + lowest + ", Highest index entry: " + highest);
  		System.out.println("Chain Info: ");
  		System.out.println("\t#collisions = slots filled - #winners = " + ( numBoards - filled ) + "\n\tfrom constructor = " + numCollisions);
- 		System.out.println("\tBiggest : "  +  biggestChain + "\n\tAverage: " +  averageChain + "\n\t#Chains with > 10 collisions: " + numBigChains);
- 		System.out.println("Call Chains: "  + Arrays.toString(chains));
-
+ 		System.out.println("\tBiggest : "  +  biggestChain + "\n\tAverage: " +  averageChain + "\n\t#Chains with > "+conditionForBig+" collisions: " + numBigChains);
+ 		System.out.println("All Chains: "  + Arrays.toString(chains));
  	}
  	
  	// ANALYSIS HELPERS //

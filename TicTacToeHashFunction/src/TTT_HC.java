@@ -1,15 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class TTT_HC{
 	TreeNode[] winners; //The lookup table which needs to be smaller //holds TreeNodes<String>
  	private static final int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683}; //for quick referencing
- 	private static final int SIZE = powsOf3[7]; //6 or 7 are probably optimal
+ 	private static final int SIZE = powsOf3[6]; //6 or 7 are probably optimal
  	
  	int numCollisions; //used for analysis
 	int numBoards;
+	double loadFactor;  //numCollisions/SIZE
  	
  	//Constructor
  	TTT_HC() {
@@ -30,6 +32,9 @@ public class TTT_HC{
 				numCollisions++;
  			}
  		}
+ 		input.close();
+ 		
+ 		loadFactor = (double)numCollisions/SIZE;
 	}
 
 	public int tttHashCode(String s) {
@@ -115,8 +120,7 @@ public class TTT_HC{
  		double averageChain;
  		int numBigChains = 0; //Big chains are greater contain > 10 collisions 
  		int conditionForBig= 0; //The condition for how many big chains there are = the 
- 		int chains[] = new int[numCollisions]; //added to keep track of the actual chain sizes  
- 		int chainIndex = 0;
+ 		ArrayList<Integer> chains = new ArrayList<Integer>(numCollisions); //ArrList to keep track of the actual chain sizes -- list because the initial size != numCollisions
  		
  		for(int i = 0; i < winners.length; i++) {
 			int ind10 = (int) ((double) i/SIZE * 10); //index as percent --> index
@@ -129,43 +133,38 @@ public class TTT_HC{
  				int b = getSize(winners[i], 0); //store size of current chain in var 
  				sumChains += b; //Sum all the chains for average
  				if(b > biggestChain ) biggestChain = b; //Keep track of the biggest chain
- 				chains[chainIndex] = b; //Depth of chains	
+ 				chains.add(b); //Depth of chains	
  				tenths[ind10]++; //Distribution of Chains
 	 		} else { //Is not a collision but is filled 
- 				//Collision info 
-	 			sumChains++; //If there is a node, it is technically a chain of length 1 
-	 			chains[chainIndex]++;
- 			} //Do this stuff no matter what
+	 			chains.add(1);
+ 			} //is not filled, but Do this stuff no matter what
  			//Distribution info //
 			if(i < lowest) lowest = i; //First entry in the table
 			if(i > highest) highest = i; //Highest entry in the table
-			//Entries/quarters
-			quarters[ind4]++;	
- 			System.out.println(chains.length + ", " + chainIndex + ", " + numCollisions);
-
-			chainIndex++;
+			quarters[ind4]++; //distribution of quarters
  		}
  		
- 		averageChain = (double) sumChains/numCollisions; 
+ 		averageChain = sumChains/chains.size(); 
  		filled = SIZE - empty;
  		conditionForBig = (int) (biggestChain - averageChain); //Big chains are chains that are > biggest-avg in length 
  		
  		//Secondary sweep on data gathered from pass 1 
- 		for(int i = 0; i < chains.length; i++) {
- 			if(chains[i] > conditionForBig) numBigChains++;
+ 		for(int i = 0; i < chains.size(); i++) {
+ 			if(chains.get(i) > conditionForBig) numBigChains++;
 
  		}
  		
  		//These could be cleaned up/moved to helper methods, but it's not too bad  
  		System.out.printf("Table["+SIZE+"] created for "+numBoards+" boards with %d collisions\n", numCollisions);
+ 		System.out.println("loadFactor (numCollisions/SIZE) = " + loadFactor ); 
  		System.out.println( filled + " / " + SIZE + " Slots filled " + " --> " + empty + " Empty slots" ); 
  		System.out.println("Entries per Quarter: " + Arrays.toString(quarters) );
  		System.out.println("Collisions per Tenth: " + Arrays.toString(tenths) );
  		System.out.println("Lowest Index Entry: " + lowest + ", Highest index entry: " + highest);
  		System.out.println("Chain Info: ");
- 		System.out.println("\t#collisions = slots filled - #winners = " + ( numBoards - filled ) + "\n\tfrom constructor = " + numCollisions);
- 		System.out.println("\tBiggest : "  +  biggestChain + "\n\tAverage: " +  averageChain + "\n\t#Chains with > "+conditionForBig+" collisions: " + numBigChains);
- 		System.out.println("All Chains: "  + Arrays.toString(chains));
+ 		System.out.println("\tCollisions: " + numCollisions);
+ 		System.out.println("\tBiggest Chain: "  +  biggestChain + "\n\tAverage Chain: " +  averageChain + "\n\tChains with > "+conditionForBig+" collisions: " + numBigChains);
+ 		System.out.println("All Chains: "  + chains.toString());
  	}
  	
  	// ANALYSIS HELPERS //
@@ -176,8 +175,41 @@ public class TTT_HC{
  			return getSize(root.getLeft(), soFar + 1) + getSize(root.getRight(), soFar + 1);
  	}
  	
+ 	// GET AND PUT ITEMS FROM THE HASHTABLE //
+ 	
+ 	public boolean get(String board) {
+ 		int index = tttHashCode(board);
+ 		
+ 		if(index > winners.length || index < 0) //if the hashcode for the given board is invalid
+ 			return false;
+ 		
+ 		TreeNode entry = winners[index];
+ 		
+ 		if(entry == null)  //If it's an empty slot 
+ 			return false;
+ 		
+ 		if(!entry.hasChildren()) //If there are no children, then it's a winner
+ 			return entry.getWin();
+ 		
+ 		else return getTree(entry, board);	//If there are children, it's still a winner, but fetch that particular win 
+ 	}
+ 	
+ 	private boolean getTree(TreeNode root, String target) {
+ 		if(root == null)
+ 			return false;
+ 		if(root.getValue().equals(target))
+ 			return true;
+ 		else return getTree(root.getLeft(), target) || getTree(root.getRight(), target);
+ 	}
+ 	
  	public static void main(String[] args) throws InterruptedException {
 		TTT_HC board = new TTT_HC();
 		board.analyze();
+		String good = " xo  o xo";
+		String bad = " 1wglasjasnfxo";
+
+		System.out.println("IS '"+good+"' a valid board: " + board.get(good) );
+		System.out.println("IS '"+bad+"' a valid board: " + board.get(bad) );
+
  	}
 }

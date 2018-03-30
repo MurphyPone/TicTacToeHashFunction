@@ -1,19 +1,24 @@
 public class TreeNode {
-	private Object value;	
+	private String board;
+	private boolean isWin;
 	private TreeNode left;
 	private TreeNode right;
 	
-	public TreeNode(Object v) 
-		{ value = v; left = null; right = null;}
+	public TreeNode(String v) 
+		{ board = v; isWin = false; left = null; right = null;}
+	public TreeNode(String v, boolean winner) 
+		{ board = v; isWin = winner; left = null; right = null;}
+
+	public TreeNode(String v, boolean winner, TreeNode l, TreeNode r) 
+		{ board = v; isWin = winner; left = l; right = r; }
 	
-	public TreeNode(Object v, TreeNode l, TreeNode r) 
-		{ value = v; left = l; right = r; }
-	
-	public Object getValue() { return value; }
+	public String getValue() { return board; }
+	public boolean getWin() { return isWin; }
 	public TreeNode getLeft() { return left; }
 	public TreeNode getRight() { return right; }
 	
-	public void setValue(Object v) { value = v; }
+	public void setBoard(String v) { board = v; }
+	public void setWinner(boolean w) { isWin = w; }
 	public void setLeft(TreeNode l) { left = l; }
 	public void setRight(TreeNode r) { right = r; }
 	
@@ -23,7 +28,7 @@ public class TreeNode {
 	
 	public TreeNode add(TreeNode node, Object value) {
 		if(node == null) //if the Bucket is empty (null)
-			node = new TreeNode(value); //Create a new root holding the Board conf
+			node = new TreeNode((String) value); //Create a new root holding the Board conf
 		else {	//else there is already a Board conf there
 			int diff = ((String) value).compareTo((String) node.getValue() );	//compare which one is bigger
 			if(diff < 0)

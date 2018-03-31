@@ -34,7 +34,7 @@ public class TTT_HC{
  		}
  		input.close();
  		
- 		loadFactor = (double)numCollisions/SIZE;
+ 		loadFactor = (double) numCollisions/SIZE;
 	}
 
 	public int tttHashCode(String s) {
@@ -135,12 +135,15 @@ public class TTT_HC{
  				if(b > biggestChain ) biggestChain = b; //Keep track of the biggest chain
  				chains.add(b); //Depth of chains	
  				tenths[ind10]++; //Distribution of Chains
+ 				//Distribution info //
+ 				if(i < lowest) lowest = i; //First entry in the table
+ 				if(i > highest) highest = i; //Highest entry in the table
 	 		} else { //Is not a collision but is filled 
 	 			chains.add(1);
+	 			//Distribution info //
+				if(i < lowest) lowest = i; //First entry in the table
+				if(i > highest) highest = i; //Highest entry in the table
  			} //is not filled, but Do this stuff no matter what
- 			//Distribution info //
-			if(i < lowest) lowest = i; //First entry in the table
-			if(i > highest) highest = i; //Highest entry in the table
 			quarters[ind4]++; //distribution of quarters
  		}
  		

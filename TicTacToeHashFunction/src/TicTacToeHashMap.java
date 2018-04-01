@@ -147,6 +147,9 @@ public class TicTacToeHashMap  {
 		TicTacToeHashMap m = new TicTacToeHashMap();
 		// TODO print out the capacity using the capcity() method
 		System.out.println("Capacity: " + m.capacity() );
+		System.out.println(m.isWin("    xxooo")); 
+		System.out.println(m.isWin(" assdfsdf"));
+
 		// TODO print out the other analytical statistics as required in the assignment
 		m.analysis();  
    }

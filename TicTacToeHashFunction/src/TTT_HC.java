@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class TTT_HC{
 	TreeNode[] winners; //The lookup table which needs to be smaller //holds TreeNodes<String>
  	private static final int[] powsOf3 = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683}; //for quick referencing
- 	private static final int SIZE = powsOf3[6]; //6 or 7 are probably optimal
+ 	private static final int SIZE = powsOf3[5]; //6 or 7 are probably optimal
  	
  	int numCollisions; //used for analysis
 	int numBoards;

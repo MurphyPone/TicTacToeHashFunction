@@ -15,7 +15,7 @@ public class TicTacToeHashMap  {
 	TicTacToeHashMap() {
 		initialCap = 2000;
 		actualCap = 0;
-		lf = 0.9f; //Learn more about floats and what this 'f' nonsense is 
+		lf = 1f; //Learn more about floats and what this 'f' nonsense is 
 		
 		winners = new HashMap<String, Boolean>(initialCap, lf ); //create our HashMap with an initial capacity that exactly fits the amount of winning boards 
 		//Potentially move this to a different method for the main???

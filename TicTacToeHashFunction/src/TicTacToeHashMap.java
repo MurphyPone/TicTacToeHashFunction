@@ -7,21 +7,24 @@ import java.util.Scanner;
 
 public class TicTacToeHashMap  {
 
-	private HashMap<String, Boolean> winners;
-	private int actualCap; //capacity 
-	private float lf;
-	private int initialCap;
+	private HashMap<String, Boolean> winners;  
+	private int s; //size
+	private float lf; //The load factor is a measure of how full the hash table is allowed to get before its capacity is 
+						//automatically increased. When the number of entries in the hash table exceeds the product of the 
+						//load factor and the current capacity, the hash table is rehashed (that is, internal data structures are rebuilt) 
+						//so that the hash table has approximately twice the number of buckets.
+	private int initialCap; //#buckets
 
 	TicTacToeHashMap() {
-		initialCap = 2000;
-		actualCap = 0;
-		lf = 1f; //Learn more about floats and what this 'f' nonsense is 
+		initialCap = (int) Math.pow(2,  10); // = 1024
+		s = 0;
+		lf = 1.5f; //I 'want' collisions, so force them to happen by using an inverted loadfactor and prevent HashMap resizing 
 		
 		winners = new HashMap<String, Boolean>(initialCap, lf ); //create our HashMap with an initial capacity that exactly fits the amount of winning boards 
 		//Potentially move this to a different method for the main???
 		Scanner input = openFile("TicTacToeWinners.txt"); //Reads in file TicTacToeWinners.txt and returns a Scanner of all winning/valid game states
 		while(input.hasNextLine()) { //Iterates through all the boards in the input file 
-			actualCap++;  //Keep track of the actual size of the hashMap
+			s++;  //Keep track of the actual size of the hashMap
 			winners.put(input.nextLine(), true); //Add the entry from the winners file to the map with the value true
 		}
 		input.close();	
@@ -75,7 +78,7 @@ public class TicTacToeHashMap  {
 		int[] quarters = new int[4];
 		int[] tenths = new int[10];
 		
-		for(int i = 0; i < table.length; i++) {
+		for(int i = 0; i < table.length; i++) {  //iterate through table instead of winners to show null entries
 			int ind10 = (int) ((double) i/cap * 10); //index as percent --> index
 			int ind4 = (int) ((double) ind10*10/25); //x/100 = y/4 --> y = x/24
 
@@ -97,9 +100,9 @@ public class TicTacToeHashMap  {
 			quarters[ind4]++; //distribution of quarters
  		}
 	
-		numCollisions = actualCap - filled;
+		numCollisions = s - filled;
 		
-		System.out.println("HashMap["+capacity()+"] created for " + actualCap + " boards with " + numCollisions + " collisions");
+		System.out.println("HashMap["+capacity()+"] created for " + s + " boards with " + numCollisions + " collisions");
 		System.out.println("loadFactor: " + lf );
 		System.out.println(filled + "/" + cap + " slots filled --> " + empty + " Empty slots" );
 		System.out.println("#collisions: " + numCollisions);
@@ -146,9 +149,6 @@ public class TicTacToeHashMap  {
 	public static void main(String[] args) throws java.io.FileNotFoundException, NoSuchFieldException, IllegalAccessException {
 		TicTacToeHashMap m = new TicTacToeHashMap();
 		// TODO print out the capacity using the capcity() method
-		System.out.println("Capacity: " + m.capacity() );
-		System.out.println(m.isWin("    xxooo")); 
-		System.out.println(m.isWin(" assdfsdf"));
 
 		// TODO print out the other analytical statistics as required in the assignment
 		m.analysis();  

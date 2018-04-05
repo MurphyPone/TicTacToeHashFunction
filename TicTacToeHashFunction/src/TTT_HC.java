@@ -1,3 +1,9 @@
+/**
+ * Class Description: This class improves upon the hashCode function used in the TicTacToeHashCode class by reducing the size of the 
+ * 		winners array and implementing a Binary Search Tree to be used for the buckets when collisions occur.
+ * @author MurphyP1
+ * @date 3/26/18
+ **/
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -13,7 +19,13 @@ public class TTT_HC{
 	int numBoards;
 	double loadFactor;  //numCollisions/SIZE
  	
- 	//Constructor
+	/**
+	 * The default constructor for a TTT_HC 
+	 * 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method TTT_HC 
+	 */
  	TTT_HC() {
  		winners = new TreeNode[ SIZE ]; //729
  		numCollisions = 0;
@@ -37,6 +49,15 @@ public class TTT_HC{
  		loadFactor = (double) numCollisions/SIZE;
 	}
 
+ 	/**
+	 * A method which accepts a String representing a Board configuration and returns an int representing it's value 
+	 * 								to be matched to the winners[] lookup table. 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method tttHashCode
+	 * @param s a String representing a 9 character Board configuration
+	 * @return the integer representing the index of the current game state in the winners[] lookup table
+	 */
 	public int tttHashCode(String s) {
 		int sum = 0;	//The value which is returned 
  		int move = -1;	//hash value of the current character
@@ -56,6 +77,15 @@ public class TTT_HC{
 	}
 	
 	// CHAR HELPER METHODS //
+	
+	/**
+	 * A helper method which accepts a character, checks if it is a valid Board token, and returns an integer representing its individual hashCode value 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method charCode
+	 * @param x the character to be evaluated
+	 * @return the integer representing the character's unique hashCode
+	 */
  	static int charCode(char x) {
  		//Use single quotes to indicate it's a char not a String
  		if( x == ' ') return 0;
@@ -64,6 +94,18 @@ public class TTT_HC{
  		return -1; //invalid char
  	}
  	
+ 	/**
+	 * A helper method which accepts 2 integers and a String which returns the character at the position which would correspond to that index
+	 * 		combination in a 2D array
+	 * 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method charAt
+	 * @param s a String to be evaluated instead of the current Board configuration
+	 * @param row an integer representing the index for the 'row' of the buttons array 
+	 * @param col an integer representing the index for the 'col' of the buttons array 
+	 * @return the character at that position in the 2D buttons array
+	 */
  	public char charAt(String s, int row, int col) {
  	     int pos = row * TicTacToe.COLS + col;
  	     if (s.length() >= pos)
@@ -73,6 +115,7 @@ public class TTT_HC{
  	}
  	
  	// FILE READING //
+ 	
  	/**
 	 *	A helper method which returns a Scanner from a supplied fileName
 	 *  @author MurphyP1
@@ -95,16 +138,23 @@ public class TTT_HC{
 	}
  	
  	// ANALYSIS //
- 	/** 
- 	 * b. Report the size of your array and the load factor.
- 	 * c. Report the number of collisions.
- 	 * 		1. the number of chains (more than 1 entry)
- 	 * 		2. the maximum chain length
- 	 * 		3. the average chain length
- 	 * d. Report on the distribution
- 	 * 		i. Number of entries in each quarter of the array
- 	 *		ii. Number of collisions in each tenth of the array
- 	*/
+ 	
+ 	/**
+	 * A helper method which provides analysis on 
+	 * 	- the size of the array and the loadfactor
+	 *  - the number of collisions
+	 *  		a. the number of chains 
+	 *  		b. the longest chain
+	 *  		c. the average chain length
+	 *  - the distribution of values in the winners array
+	 *  		a. the number of entries in each quarter of the array 
+	 *  		b. the number of collisions in each tenth of the array
+	 * 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method analyze
+	 * @return void
+	 */
  	public void analyze() {
  		int empty = 0; //number of empty slots in winners]
  		int filled;
@@ -171,6 +221,18 @@ public class TTT_HC{
  	}
  	
  	// ANALYSIS HELPERS //
+ 	
+ 	/**
+	 * A recursive method which the root of a TreeNode and an integer to keep track of how many nodes have been 
+	 * 		visited so far and returns the number of entries in a bucket
+	 *
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method getSize
+	 * @param root a TreeNode to search
+	 * @param soFar an integer keeping track of how many other nodes have been evaluated so far
+	 * @return an integer value representing the total number of entries in a bucket
+	 */	
  	private static int getSize(TreeNode root, int soFar) {
  		if(root == null) 
  			return soFar;
@@ -180,6 +242,15 @@ public class TTT_HC{
  	
  	// GET AND PUT ITEMS FROM THE HASHTABLE //
  	
+ 	/**
+	 * A method which returns the winner/loser stauts of a Board according to a given String representing a Board configuration composed of xs os and spaces.
+	 * 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method get
+	 * @param board the String representing the Board configuration
+	 * @return true if a winner, false if a loser
+	 */	
  	public boolean get(String board) {
  		int index = tttHashCode(board);
  		
@@ -197,6 +268,16 @@ public class TTT_HC{
  		else return getTree(entry, board);	//If there are children, it's still a winner, but fetch that particular win 
  	}
  	
+ 	/**
+	 * A helper method which returns the winner/loser status of a colliding Board entry according to a given String representing a Board.
+	 * 
+	 * @author MurphyP1
+	 * @date 3/26/18
+	 * @method get
+	 * @param root the TreeNode to search
+	 * @param target the String representing the desired Board configuration
+	 * @return true if found, false if not
+	 */	
  	private boolean getTree(TreeNode root, String target) {
  		if(root == null)
  			return false;
@@ -205,6 +286,14 @@ public class TTT_HC{
  		else return getTree(root.getLeft(), target) || getTree(root.getRight(), target);
  	}
  	
+ 	/**
+	 *	The main method which runs a series of tests involving hashCodes of the instance Board and Strings representing Board configuration
+	 *  @author MurphyP1
+	 *  @date 3/26/18
+	 *  @method main
+	 *  @param args and array of Strings holding the arguments passed in through the command line
+	 *  @throws InterruptedException  
+	 */
  	public static void main(String[] args) throws InterruptedException {
 		TTT_HC board = new TTT_HC();
 		board.analyze();

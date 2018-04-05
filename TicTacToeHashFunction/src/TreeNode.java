@@ -1,3 +1,8 @@
+/**
+ * Class Description: The standard TreeNode implementation for a Binary Search Tree copied from my memory --> and the textbook
+ * @author MurphyP1
+ * @date 3/26/18
+ **/
 public class TreeNode {
 	private String board;
 	private boolean isWin;

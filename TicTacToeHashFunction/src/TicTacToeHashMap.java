@@ -67,6 +67,7 @@ public class TicTacToeHashMap  {
 		Field tableField = HashMap.class.getDeclaredField("table");
 		tableField.setAccessible(true);
 		Object[] table = (Object[]) tableField.get(winners); 
+		//TODO get decalred fields "next"
 		
 		// init values
 		int cap = capacity();

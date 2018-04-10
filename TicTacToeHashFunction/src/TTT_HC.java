@@ -169,7 +169,7 @@ public class TTT_HC{
  		int sumChains = 0;
  		double averageChain;
  		int numBigChains = 0; //Big chains are greater contain > 10 collisions 
- 		int conditionForBig= 0; //The condition for how many big chains there are = the 
+ 		int conditionForBig = 0; //The condition for how many big chains there are = the 
  		ArrayList<Integer> chains = new ArrayList<Integer>(numCollisions); //ArrList to keep track of the actual chain sizes -- list because the initial size != numCollisions
  		
  		for(int i = 0; i < winners.length; i++) {
@@ -189,7 +189,7 @@ public class TTT_HC{
  				if(i < lowest) lowest = i; //First entry in the table
  				if(i > highest) highest = i; //Highest entry in the table
 	 		} else { //Is not a collision but is filled 
-	 			chains.add(1);
+	 			//chains.add(1);
 	 			//Distribution info //
 				if(i < lowest) lowest = i; //First entry in the table
 				if(i > highest) highest = i; //Highest entry in the table
@@ -204,7 +204,6 @@ public class TTT_HC{
  		//Secondary sweep on data gathered from pass 1 
  		for(int i = 0; i < chains.size(); i++) {
  			if(chains.get(i) > conditionForBig) numBigChains++;
-
  		}
  		
  		//These could be cleaned up/moved to helper methods, but it's not too bad  

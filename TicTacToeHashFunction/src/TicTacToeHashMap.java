@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -67,42 +68,73 @@ public class TicTacToeHashMap  {
 		Field tableField = HashMap.class.getDeclaredField("table");
 		tableField.setAccessible(true);
 		Object[] table = (Object[]) tableField.get(winners); 
-		//TODO get decalred fields "next"
 		
 		// init values
 		int cap = capacity();
 		int empty = 0;
 		int filled = 0;
-		int numCollisions;
 		int highest = 0;
 		int lowest = table.length;
 		int[] quarters = new int[4];
 		int[] tenths = new int[10];
+		//Chain info
+		int numCollisions = 0;
+		int biggestChain = 0;
+		int sumChains = 0;
+		double averageChain;
+		int numBigChains = 0;
+		int conditionForBig = 0;
+ 		ArrayList<Integer> chains = new ArrayList<Integer>(3 * table.length / 4); //ArrList to keep track of the actual chain sizes -- list because the initial size != numCollisions
 		
 		for(int i = 0; i < table.length; i++) {  //iterate through table instead of winners to show null entries
 			int ind10 = (int) ((double) i/cap * 10); //index as percent --> index
 			int ind4 = (int) ((double) ind10*10/25); //x/100 = y/4 --> y = x/24
-
+						
  			if(table[i] == null) //If it's an empty slot
  				empty++;
- 			else if(table[i] instanceof TreeNode ) { //Is a Collision
- 				System.out.println("XXXSDKGNSDKGNSDKG");
- 				filled++;
- 				//Collision Info
- 				tenths[ind10]++; //Distribution of Chains
+ 			else {
  				if(i < lowest) lowest = i; //First entry in the table
- 				if(i > highest) highest = i; //Highest entry in the table
-	 		} else { //Is not a collision but is filled 
-	 			filled++;
-	 			if(i < lowest) lowest = i; //First entry in the table
 				if(i > highest) highest = i; //Highest entry in the table
+ 				
+ 				/* Thanks Patrick for this code */
+ 				Field next = table[i].getClass().getDeclaredField("next"); //store the private "next" field 
+ 				next.setAccessible(true);	//Allow access
+ 				Object o = (Object) next.get(table[i]);	//Get the value of the Field?
+ 				/* end Patrick's code */
+ 				
+ 				if(o != null ) { //Is a Collision
+ 					filled++;
+ 					//Collision Info
+ 					int b = 0; //# buckets (entries) in collision
+ 					while (o != null) {
+ 						b++; 
+ 						next = o.getClass().getDeclaredField("next");
+ 						next.setAccessible(true);
+ 						o = next.get(o);
+ 					}
+ 					if(b > biggestChain ) biggestChain = b; //Keep track of the biggest chain
+ 	 				if(b > 1 ) { 
+ 	 					chains.add(b); //Depth of chains	
+ 	 					sumChains += b; //sum all the chains for avg
+ 	 				}
+ 	 				tenths[ind10]++; //Distribution of Chains
+ 				} else { //Is not a collision but is filled 
+ 					filled++;	
+ 				}
  			} //is not filled, but Do this stuff no matter what
  			//Distribution info //
 			quarters[ind4]++; //distribution of quarters
  		}
 	
 		numCollisions = s - filled;
+ 		averageChain = sumChains/chains.size(); 
+ 		conditionForBig = (int) (biggestChain - averageChain); //Big chains are chains that are > biggest-avg in length 
 		
+ 		//Secondary sweep on data gathered from pass 1 
+ 		for(int i = 0; i < chains.size(); i++) {
+ 			if(chains.get(i) > conditionForBig) numBigChains++;
+ 		}
+ 		
 		System.out.println("HashMap["+capacity()+"] created for " + s + " boards with " + numCollisions + " collisions");
 		System.out.println("loadFactor: " + lf );
 		System.out.println(filled + "/" + cap + " slots filled --> " + empty + " Empty slots" );
@@ -112,31 +144,8 @@ public class TicTacToeHashMap  {
  		System.out.println("Lowest Index Entry: " + lowest + ", Highest index entry: " + highest);
  		System.out.println("Chain Info: ");
  		System.out.println("\tCollisions: " + numCollisions);
- 		
-		/*  Table[729] created for 1400 boards with 956 collisions
-			loadFactor (numCollisions/SIZE) = 1.3113854595336076
-			444 / 729 Slots filled  --> 285 Empty slots
-			Entries per Quarter: [219, 146, 219, 145]
-			Collisions per Tenth: [15, 36, 53, 22, 34, 54, 42, 36, 51, 43]
-			Lowest Index Entry: 0, Highest index entry: 728
-			Chain Info: 
-				Collisions: 956
-				Biggest Chain: 47
-				Average Chain: 10.0
-				Chains with > 37 collisions: 14
-		 */
-		
-		/*Analysis
-		for(Object board : table) {
-			amt++;
-			//DO STUFF HERE
-			if(board == null) {
-				empty++;
-			} else {
-				filled++;
-			}
-		} */
-		
+ 		System.out.println("\tBiggest Chain: "  +  biggestChain + "\n\tAverage Chain: " +  averageChain + "\n\tChains with > "+conditionForBig+" collisions: " + numBigChains);
+ 		System.out.println("All Chains: "  + chains.toString()); 		
 	}
 	
 	//Added method which accepts a string and returns whether or not it is a winner based off the given input winners file
@@ -149,9 +158,8 @@ public class TicTacToeHashMap  {
 
 	public static void main(String[] args) throws java.io.FileNotFoundException, NoSuchFieldException, IllegalAccessException {
 		TicTacToeHashMap m = new TicTacToeHashMap();
-		// TODO print out the capacity using the capcity() method
-
-		// TODO print out the other analytical statistics as required in the assignment
+		System.out.println("Capacity of TicTacToeHashMap: " + m.capacity());
+		System.out.println("\n-----ANALYSIS-----\n");
 		m.analysis();  
    }
 

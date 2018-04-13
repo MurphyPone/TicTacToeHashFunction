@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class TicTacToeHashMap  {
 
-	private HashMap<String, Boolean> winners;  
+	private HashMap<StringPlus, Boolean> winners;  
 	private int s; //size
 	private float lf; //The load factor is a measure of how full the hash table is allowed to get before its capacity is 
 						//automatically increased. When the number of entries in the hash table exceeds the product of the 
@@ -21,12 +21,13 @@ public class TicTacToeHashMap  {
 		s = 0;
 		lf = 1.5f; //I 'want' collisions, so force them to happen by using an inverted loadfactor and prevent HashMap resizing 
 		
-		winners = new HashMap<String, Boolean>(initialCap, lf ); //create our HashMap with an initial capacity that exactly fits the amount of winning boards 
+		winners = new HashMap<StringPlus, Boolean>(initialCap, lf ); //create our HashMap with an initial capacity that exactly fits the amount of winning boards 
 		//Potentially move this to a different method for the main???
 		Scanner input = openFile("TicTacToeWinners.txt"); //Reads in file TicTacToeWinners.txt and returns a Scanner of all winning/valid game states
 		while(input.hasNextLine()) { //Iterates through all the boards in the input file 
 			s++;  //Keep track of the actual size of the hashMap
-			winners.put(input.nextLine(), true); //Add the entry from the winners file to the map with the value true
+			//TODO THIS LINE CHANGES THE STRING HASHCODE TO USE MY CUSTOM HASHCODE FROM TTC_HC
+			winners.put(new StringPlus(input.nextLine(), initialCap), true); //Add the entry from the winners file to the map with the value true
 		}
 		input.close();	
    }
